@@ -9,7 +9,7 @@ class TestSendFilesToServer(unittest.TestCase):
     server_url = 'http://172.212.97.195/upload/'
 
     @patch('http_client.requests.post')
-    def test_send_files_to_server_success(self, mock_post):
+    def test_send_files_to_server_existing_images_success(self, mock_post):
         mock_response = Mock()
         mock_response.status_code = 200
         mock_post.return_value = mock_response
@@ -18,11 +18,10 @@ class TestSendFilesToServer(unittest.TestCase):
             response = send_files_to_server(source_dir, server_url)
             self.assertEqual(response.status_code, 200)
         
-        # Check that the log message was generated
         self.assertIn("Files were sent successfully.", log.output[0])
 
     @patch('http_client.requests.post')
-    def test_send_files_to_server_failure(self, mock_post):
+    def test_send_files_to_server_nonexisting_images_failure(self, mock_post):
         mock_response = Mock()
         mock_response.status_code = 500
         mock_post.return_value = mock_response
@@ -32,7 +31,6 @@ class TestSendFilesToServer(unittest.TestCase):
             response = send_files_to_server(source_dir, server_url)
             self.assertEqual(response.status_code, 500)
         
-        # Check that the log message was generated
         self.assertIn(f"Failed to send files. Status code: {response.status_code}", log.output[0])
 
 if __name__ == '__main__':
